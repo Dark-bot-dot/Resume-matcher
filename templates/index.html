@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Compare resume text with a job description using TF-IDF and skill overlap.">
+  <title>ResumeMatch — Resume and Job Matcher</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">R</span> ResumeMatch</a><span class="top-note">A simple, explainable match</span></header>
+  <main class="layout">
+    <section class="intro">
+      <p class="eyebrow">AI RESUME AND JOB MATCHER</p>
+      <h1>Make your next application<br><span>more intentional.</span></h1>
+      <p class="intro-copy">Compare a resume with a job description. See a text similarity score alongside skills you already mention and skills the job asks for.</p>
+      <div class="how"><span class="step">01</span><span>Paste text or upload a resume</span></div>
+      <div class="how"><span class="step">02</span><span>Add the job description</span></div>
+      <div class="how"><span class="step">03</span><span>Review your match and skill gaps</span></div>
+      <p class="privacy">Your resume is processed in memory for this request and is not saved by this app.</p>
+    </section>
+    <section class="workspace" aria-label="Resume matcher">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}<div class="alerts">{% for category, message in messages %}<p class="alert {{ category }}" role="alert">{{ message }}</p>{% endfor %}</div>{% endif %}
+      {% endwith %}
+      <form action="{{ url_for('match') }}" method="post" enctype="multipart/form-data">
+        <div class="field-head"><label for="resume_text">Your resume</label><span>Paste text or attach a file</span></div>
+        <textarea id="resume_text" name="resume_text" rows="9" placeholder="Paste your resume text here…">{{ resume_text|default('') }}</textarea>
+        <label class="upload" for="resume_file"><span class="upload-icon">↑</span><span><strong>Choose a resume file</strong><small>PDF, DOCX, or TXT · up to 5 MB</small></span><input id="resume_file" name="resume_file" type="file" accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"></label>
+        <div class="field-head job-head"><label for="job_text">Job description</label><span>Required</span></div>
+        <textarea id="job_text" name="job_text" rows="8" placeholder="Paste the job title, responsibilities, and qualifications…">{{ job_text|default('') }}</textarea>
+        <button type="submit">Analyze match <span aria-hidden="true">→</span></button>
+      </form>
+      {% if result %}
+      <section class="results" aria-live="polite">
+        <div class="result-heading"><div><p class="eyebrow">YOUR RESULTS</p><h2>Match overview</h2></div><div class="score"><strong>{{ result.score }}<small>%</small></strong><span>text similarity</span></div></div>
+        <p class="score-note">This score reflects TF-IDF cosine similarity between the two texts. It is a rough comparison, not a hiring prediction.</p>
+        {% if result.has_skill_data %}
+          <div class="skill-columns">
+            <div><h3>Skills in both <span>{{ result.matched_skills|length }}</span></h3>{% if result.matched_skills %}<ul class="chips matched">{% for skill in result.matched_skills %}<li>{{ skill }}</li>{% endfor %}</ul>{% else %}<p class="empty">No shared skills detected from the built-in vocabulary.</p>{% endif %}</div>
+            <div><h3>Skills to consider <span>{{ result.missing_skills|length }}</span></h3>{% if result.missing_skills %}<ul class="chips missing">{% for skill in result.missing_skills %}<li>{{ skill }}</li>{% endfor %}</ul>{% else %}<p class="empty">No missing listed skills detected.</p>{% endif %}</div>
+          </div>
+          <p class="result-foot">Detected {{ result.resume_skill_count }} resume skills and {{ result.job_skill_count }} job skills from the editable vocabulary.</p>
+        {% else %}<p class="empty">No skills from the built-in vocabulary were found in this job description. The similarity score is still available.</p>{% endif %}
+      </section>
+      {% endif %}
+      <p class="disclaimer">For guidance only. Review the job requirements and tailor your application using your own judgment.</p>
+    </section>
+  </main>
+  <footer>ResumeMatch <span>·</span> Built with Python, Flask, and scikit-learn</footer>
+</body>
+</html>
