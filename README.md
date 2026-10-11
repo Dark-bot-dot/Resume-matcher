@@ -7,6 +7,7 @@ A small web app that compares resume text with a job description. It uses TF-IDF
 - Paste resume and job-description text, or upload a PDF, DOCX, or TXT resume (maximum 5 MB).
 - See a 0-100 TF-IDF cosine similarity score.
 - See matched and potentially missing skills from an editable vocabulary in `matcher.py`.
+- Get targeted next-step suggestions based on the overlap and detected gaps, with reminders to include only accurate experience.
 - Resume uploads are parsed in memory and are not written to disk or saved between requests.
 - Responsive interface and Docker deployment option.
 
@@ -54,7 +55,7 @@ Open <http://127.0.0.1:8000>. For a production deployment, configure a unique se
 2. It calculates cosine similarity between their TF-IDF vectors and displays the result as a percentage.
 3. It scans both texts for skill names and aliases in `SKILLS` in `matcher.py`. Skills in both are shown as matched; job skills not found in the resume are shown as potentially missing.
 
-This is a lightweight text-matching demo. It does not use a trained language model, understand context or seniority, validate claims, rank candidates, or predict hiring outcomes. The skill vocabulary is deliberately finite and can miss synonyms or skills outside its list. Similarity is not a probability of getting an interview.
+This is a lightweight, rules-based text-matching demo. It does not use a trained language model, understand context or seniority, validate claims, rank candidates, or predict hiring outcomes. Suggestions are generated from detected terms and fixed templates, not from an AI model reviewing the meaning of the resume. The skill vocabulary is deliberately finite and can miss synonyms or skills outside its list. Similarity is not a probability of getting an interview.
 
 ## Supported resume files
 

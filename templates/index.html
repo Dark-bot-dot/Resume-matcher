@@ -35,6 +35,11 @@
       <section class="results" aria-live="polite">
         <div class="result-heading"><div><p class="eyebrow">YOUR RESULTS</p><h2>Match overview</h2></div><div class="score"><strong>{{ result.score }}<small>%</small></strong><span>text similarity</span></div></div>
         <p class="score-note">This score reflects TF-IDF cosine similarity between the two texts. It is a rough comparison, not a hiring prediction.</p>
+        <section class="recommendations" aria-label="Application suggestions">
+          <div class="recommendation-head"><div><p class="eyebrow">NEXT STEPS</p><h3>How to strengthen this application</h3></div><span class="based-on">Based on detected text</span></div>
+          <ol class="recommendation-list">{% for item in result.recommendations %}<li><span class="rec-number">0{{ loop.index }}</span><div><strong>{{ item.title }}</strong><p>{{ item.body }}</p></div></li>{% endfor %}</ol>
+          <p class="recommendation-caveat">Suggestions are generated from text and a limited skill list. Check that every example is accurate and reflects your own work.</p>
+        </section>
         {% if result.has_skill_data %}
           <div class="skill-columns">
             <div><h3>Skills in both <span>{{ result.matched_skills|length }}</span></h3>{% if result.matched_skills %}<ul class="chips matched">{% for skill in result.matched_skills %}<li>{{ skill }}</li>{% endfor %}</ul>{% else %}<p class="empty">No shared skills detected from the built-in vocabulary.</p>{% endif %}</div>
